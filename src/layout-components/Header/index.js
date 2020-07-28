@@ -8,7 +8,6 @@ import {
   IconButton,
   AppBar,
   Box,
-  Button,
   Tooltip
 } from '@material-ui/core';
 

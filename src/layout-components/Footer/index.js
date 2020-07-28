@@ -43,7 +43,7 @@ const Footer = props => {
             2020 - crafted with <span className="text-danger px-1">❤</span> by{' '}
             <a
               href="https://uifort.com"
-              rel="noopener"
+              rel="noopener noreferrer"
               target="_blank"
               title="UiFort.com">
               UiFort.com

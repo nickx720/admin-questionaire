@@ -8,7 +8,7 @@ import MuiTheme from './theme';
 
 // Layout Blueprints
 
-import { LeftSidebar, PresentationLayout } from './layout-blueprints';
+import { LeftSidebar } from './layout-blueprints';
 
 // Example Pages
 
@@ -27,7 +27,7 @@ import FormsControls from './example-pages/FormsControls';
 
 const DashboardDefault = lazy(() => import('./example-pages/DashboardDefault'));
 const Cards3 = lazy(() => import('./example-pages/Cards3'));
-const LandingPage = lazy(() => import('./example-pages/LandingPage'));
+/* const LandingPage = lazy(() => import('./example-pages/LandingPage')); */
 const Accordions = lazy(() => import('./example-pages/Accordions'));
 const Modals = lazy(() => import('./example-pages/Modals'));
 const Notifications = lazy(() => import('./example-pages/Notifications'));
@@ -36,6 +36,7 @@ const Tabs = lazy(() => import('./example-pages/Tabs'));
 const ApexCharts = lazy(() => import('./example-pages/ApexCharts'));
 const Maps = lazy(() => import('./example-pages/Maps'));
 const ListGroups = lazy(() => import('./example-pages/ListGroups'));
+const AdminLanding = lazy(() => import('./pages/AdminLanding'));
 
 const Routes = () => {
   const location = useLocation();
@@ -112,7 +113,8 @@ const Routes = () => {
                 '/FormsControls',
                 '/ApexCharts',
                 '/Maps',
-                '/ListGroups'
+                '/ListGroups',
+                '/AdminLanding'
               ]}>
               <LeftSidebar>
                 <Switch location={location} key={location.pathname}>
@@ -153,6 +155,7 @@ const Routes = () => {
                     <Route path="/ApexCharts" component={ApexCharts} />
                     <Route path="/Maps" component={Maps} />
                     <Route path="/ListGroups" component={ListGroups} />
+                    <Route path="/AdminLanding" component={AdminLanding} />
                   </motion.div>
                 </Switch>
               </LeftSidebar>
