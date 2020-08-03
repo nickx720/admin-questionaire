@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
 import { ExampleWrapperSeamless, PageTitle } from 'layout-components'
-import { Grid, Card, Divider, TextField } from '@material-ui/core'
+import { Grid, Card, Divider, TextField, Button } from '@material-ui/core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 
@@ -31,6 +32,26 @@ export default function Answers() {
 
                             </Grid>
                         </Card>
+                    </Grid>
+                </Grid>
+            </ExampleWrapperSeamless>
+            <ExampleWrapperSeamless>
+                <Grid container spacing={4}>
+                    <Grid item xs={12} lg={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Button variant="contained" color="primary" className="m-2" type="submit">
+                            <span className="btn-wrapper--icon">
+                                <FontAwesomeIcon icon={"check"} />
+                            </span>
+                            <span className="btn-wrapper--label">Submit</span>
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} lg={6}>
+                        <Button variant="contained" color="default" className="m-2" >
+                            <span className="btn-wrapper--icon">
+                                <FontAwesomeIcon icon={"undo"} />
+                            </span>
+                            <span className="btn-wrapper--label">Reset</span>
+                        </Button>
                     </Grid>
                 </Grid>
             </ExampleWrapperSeamless>
