@@ -6,7 +6,7 @@ import Routes from './Routes';
 import ScrollToTop from './utils/ScrollToTop';
 import './assets/base.scss';
 import CssBaseline from '@material-ui/core/CssBaseline';
-
+import { SnackbarProvider } from 'notistack';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   fab,
@@ -262,7 +262,9 @@ class App extends Component {
         <BrowserRouter basename="/admin/">
           <CssBaseline />
           <ScrollToTop>
-            <Routes />
+            <SnackbarProvider maxSnack={3}>
+              <Routes />
+            </SnackbarProvider>
           </ScrollToTop>
         </BrowserRouter>
       </Provider>

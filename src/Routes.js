@@ -37,6 +37,7 @@ const ApexCharts = lazy(() => import('./example-pages/ApexCharts'));
 const Maps = lazy(() => import('./example-pages/Maps'));
 const ListGroups = lazy(() => import('./example-pages/ListGroups'));
 const AdminLanding = lazy(() => import('./pages/AdminLanding'));
+const Answers = lazy(() => import('./pages/Answers'));
 
 const Routes = () => {
   const location = useLocation();
@@ -114,7 +115,8 @@ const Routes = () => {
                 '/ApexCharts',
                 '/Maps',
                 '/ListGroups',
-                '/AdminLanding'
+                '/AdminLanding',
+                '/Answers'
               ]}>
               <LeftSidebar>
                 <Switch location={location} key={location.pathname}>
@@ -156,6 +158,7 @@ const Routes = () => {
                     <Route path="/Maps" component={Maps} />
                     <Route path="/ListGroups" component={ListGroups} />
                     <Route path="/AdminLanding" component={AdminLanding} />
+                    <Route path="/Answers" component={Answers} />
                   </motion.div>
                 </Switch>
               </LeftSidebar>
