@@ -4,13 +4,15 @@ import { PageTitle, ExampleWrapperSeamless } from 'layout-components';
 import { Divider, Grid, Card, TextField, IconButton, CardContent, Box, Button } from '@material-ui/core';
 import { ifElse, isEmpty, complement, compose, trim, map, either, remove, uniq, reverse, isNil, lensProp, set } from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { postQuestion } from './services.js'
+import { postQuestion, getTopics } from './services.js'
 import useSignUpForm from '../../helpers/FormHooks.js';
 import { useSnackbar } from 'notistack';
 export default function AdminLanding() {
 
     const [annotations, setAnnotations] = useState(null);
     const [entries, setEntries] = useState([]);
+    const [answer, setAnswer] = useState("");
+    const [topics, setTopics] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const initialFormState = {
         id: "1",
@@ -54,6 +56,10 @@ export default function AdminLanding() {
         setEntries(removeFromList(entries));
 
     }
+    const loadTopic = () => {
+        getTopics(answer).then((x) => setTopics(x))
+    }
+    const deleteFromTopics = id => setTopics(topics.filter((_, xid) => xid !== id))
     const signup = () => {
         /* inputs.keyword = [...annotations]; */
         /*  const consoleMe = x => console.log(x)
@@ -144,17 +150,32 @@ export default function AdminLanding() {
                                             label="Question"
                                             value={inputs.rawQuestion}
                                         />
+
                                     </Grid>
                                     <Grid item xs={12} lg={12}>
-                                        <TextField
-                                            fullWidth
-                                            className="m-2"
-                                            id="standard-multiline-static"
-                                            label="Expected Answer"
-                                            multiline
-                                            rows="4"
-                                            onMouseUp={handleSelect}
-                                        />
+                                        <Grid container>
+
+                                            <Grid item xs={12} lg={11}>
+                                                <TextField
+                                                    fullWidth
+                                                    className="m-2"
+                                                    id="standard-multiline-static"
+                                                    label="Expected Answer"
+                                                    onChange={(e) => setAnswer(e.target.value)}
+                                                    multiline
+                                                    rows="4"
+                                                    onMouseUp={handleSelect}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} lg={1} style={{ "alignSelf": "flex-end" }}>
+                                                <Button variant="contained" color="secondary" className="ml-3 p-2" onClick={loadTopic}>
+                                                    <span className="btn-wrapper--icon">
+                                                        <FontAwesomeIcon icon={"check"} />
+                                                    </span>
+                                                    <span className="btn-wrapper--label">Lookup</span>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
                                     <Grid item xs={12} lg={6}>
                                         <TextField
@@ -237,6 +258,63 @@ export default function AdminLanding() {
                         </div>
                     </CardContent>
                 </Card>
+                {topics.length > 0 && <Card className="card-box mb-4">
+                    <CardContent className="p-0">
+                        <div className="table-responsive">
+                            <table className="table table-striped table-hover text-nowrap mb-0">
+                                <thead className="thead-light">
+                                    <tr>
+                                        <th style={{ width: '40%' }}>Value</th>
+                                        <th className="text-center">Topic</th>
+                                        <th className="text-center">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <Fragment>
+                                        {topics !== null && topics.map((x, id) => <tr key={id}>
+                                            <td>
+                                                <div className="d-flex align-items-center">
+                                                    <div>
+                                                        <a
+                                                            href="#/"
+                                                            onClick={e => e.preventDefault()}
+                                                            className="font-weight-bold text-black"
+                                                            title="...">{x}</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="text-center"> <div className="h-auto py-0 px-3 ">
+                                                <div>
+                                                    <span
+                                                        onClick={e => e.preventDefault()}
+                                                        className="font-weight-bold text-black"
+                                                        title="...">{x}</span>
+                                                </div>
+                                            </div></td>
+                                            <td className="text-center">
+                                                <Box >
+                                                    <IconButton
+                                                        size="small"
+                                                        color="primary"
+                                                        className="text-danger"
+                                                        title="View details"
+                                                        onClick={() => deleteFromTopics(id)}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon="trash"
+                                                            className="font-size-lg"
+                                                        />
+                                                    </IconButton>
+                                                </Box>
+                                            </td>
+
+                                        </tr>
+                                        )}</Fragment>
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>}
                 <ExampleWrapperSeamless>
                     <Grid container spacing={4}>
                         <Grid item xs={12} lg={6} style={{ display: "flex", justifyContent: "flex-end" }}>
