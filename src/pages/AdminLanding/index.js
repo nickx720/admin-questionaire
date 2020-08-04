@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Fragment } from 'react';
 import { PageTitle, ExampleWrapperSeamless } from 'layout-components';
 import { Divider, Grid, Card, TextField, IconButton, CardContent, Box, Button } from '@material-ui/core';
-import { ifElse, isEmpty, complement, compose, trim, map, either, remove, uniq, reverse, isNil, lensProp, set } from 'ramda';
+import { ifElse, isEmpty, complement, compose, trim, map, either, remove, uniq, reverse, isNil, lensProp, set, omit } from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { postQuestion, getTopics } from './services.js'
 import useSignUpForm from '../../helpers/FormHooks.js';
@@ -11,7 +11,6 @@ export default function AdminLanding() {
 
     const [annotations, setAnnotations] = useState(null);
     const [entries, setEntries] = useState([]);
-    const [answer, setAnswer] = useState("");
     const [topics, setTopics] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
     const initialFormState = {
@@ -21,11 +20,13 @@ export default function AdminLanding() {
             clientId: 'National Institute Of Technology',
             classId: 'WED4321',
             subjectId: 'XSV1234',
-            questionId: '1',
+            questionId: "1"
         },
         rawQuestion: "",
         rawAnswer: "",
-        totalMarks: 0
+        totalMarks: 0,
+        maxMarks: 0,
+        topics: []
     }
 
 
@@ -57,17 +58,21 @@ export default function AdminLanding() {
 
     }
     const loadTopic = () => {
-        getTopics(answer).then((x) => setTopics(x))
+        getTopics(inputs.rawAnswer).then((x) => setTopics(x))
     }
     const deleteFromTopics = id => setTopics(topics.filter((_, xid) => xid !== id))
     const signup = () => {
         /* inputs.keyword = [...annotations]; */
-        /*  const consoleMe = x => console.log(x)
-         const consoleErr = x => console.error(x) */
+        /*   const consoleMe = x => console.log(topics)
+          const consoleErr = x => console.error(x) */
         const warnUser = () => alert("Please select phrases from expected answer which need to be graded")
         const xKeyWord = lensProp('keywords');
-        const setAnnotationsWithKeywords = () => set(xKeyWord, [...annotations], inputs);
-        const valueForPost = x => ifElse(isNil, warnUser, setAnnotationsWithKeywords)(x)
+        const removePhrase = [...annotations].map(x => omit(['isPhrase'], x))
+        const setAnnotationsWithKeywords = (inputs) => set(xKeyWord, removePhrase, { ...inputs });
+        const xTopics = lensProp('topics')
+        const setTopicsWithKeyTopic = (inputs) => set(xTopics, [...topics], { ...inputs })
+        const composePostBodyWithInput = () => compose(setAnnotationsWithKeywords, setTopicsWithKeyTopic)(inputs)
+        const valueForPost = x => ifElse(isNil, warnUser, composePostBodyWithInput)(x)
         let output = valueForPost(annotations);
         console.log(output)
         postQuestion(output).then(() => enqueueSnackbar('Question successfully submitted', { variant: 'success' }))
@@ -117,6 +122,7 @@ export default function AdminLanding() {
                                             name="subjectId"
                                             label="Subject Id"
                                             value={inputs.identifier.subjectId}
+                                            onChange={handleInputChange}
                                         />
                                     </Grid>
                                 </Grid>
@@ -136,8 +142,9 @@ export default function AdminLanding() {
                                             fullWidth
                                             className="m-2"
                                             id="standard-basic3"
-                                            name="questionId"
+                                            name="identifier.questionId"
                                             label="Question Id"
+                                            onChange={handleInputChange}
                                             value={inputs.identifier.questionId}
                                         />
                                     </Grid>
@@ -149,6 +156,7 @@ export default function AdminLanding() {
                                             name="rawQuestion"
                                             label="Question"
                                             value={inputs.rawQuestion}
+                                            onChange={handleInputChange}
                                         />
 
                                     </Grid>
@@ -161,10 +169,12 @@ export default function AdminLanding() {
                                                     className="m-2"
                                                     id="standard-multiline-static"
                                                     label="Expected Answer"
-                                                    onChange={(e) => setAnswer(e.target.value)}
+                                                    name="rawAnswer"
                                                     multiline
                                                     rows="4"
                                                     onMouseUp={handleSelect}
+                                                    value={inputs.rawAnswer}
+                                                    onChange={handleInputChange}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} lg={1} style={{ "alignSelf": "flex-end" }}>
@@ -194,6 +204,9 @@ export default function AdminLanding() {
                                             className="m-2"
                                             id="standard-basic5"
                                             label="Max Marks"
+                                            name="maxMarks"
+                                            value={inputs.maxMarks}
+                                            onChange={handleNumericInputChange}
                                         />
                                     </Grid>
                                 </Grid>
