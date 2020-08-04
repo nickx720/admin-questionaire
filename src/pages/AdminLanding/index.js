@@ -71,7 +71,7 @@ export default function AdminLanding() {
         const setAnnotationsWithKeywords = (inputs) => set(xKeyWord, removePhrase, { ...inputs });
         const xTopics = lensProp('topics')
         const setTopicsWithKeyTopic = (inputs) => set(xTopics, [...topics], { ...inputs })
-        const composePostBodyWithInput = () => compose(setAnnotationsWithKeywords, setTopicsWithKeyTopic)(inputs)
+        const composePostBodyWithInput = () => compose(setAnnotationsWithKeywords, /* setTopicsWithKeyTopic */)(inputs)
         const valueForPost = x => ifElse(isNil, warnUser, composePostBodyWithInput)(x)
         let output = valueForPost(annotations);
         console.log(output)
