@@ -25,8 +25,7 @@ export default function AdminLanding() {
         rawQuestion: "",
         rawAnswer: "",
         totalMarks: 0,
-        maxMarks: 0,
-        topics: []
+        maxMarks: 0
     }
 
 
