@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Fragment } from 'react';
 import { PageTitle, ExampleWrapperSeamless } from 'layout-components';
 import { Divider, Grid, Card, TextField, IconButton, CardContent, Box, Button } from '@material-ui/core';
-import { ifElse, isEmpty, complement, compose, trim, map, either, remove, uniq, reverse, isNil, lensProp, set, omit } from 'ramda';
+import { ifElse, isEmpty, complement, compose, trim, map, either, remove, uniq, reverse, isNil, lensProp, set, omit, gt, length, __ } from 'ramda';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { postQuestion, getTopics } from './services.js'
 import useSignUpForm from '../../helpers/FormHooks.js';
@@ -31,8 +31,8 @@ export default function AdminLanding() {
 
     const handleSelect = () => {
         /* Beginning  of functions */
-        const checkifGlobalSetisEmpty = () => entries.length > 0;
-        const hasContent = x => ifElse(either(complement(isEmpty), checkifGlobalSetisEmpty), addingAnnotationBox, isNotSelected)(x)
+        const checkifGlobalSetorSelectedisEmpty = () => entries.length > 0;
+        const hasContent = x => ifElse(either(complement(isEmpty), checkifGlobalSetorSelectedisEmpty), addingAnnotationBox, isNotSelected)(x)
         const isNotSelected = () => null;
         const listingPhrases = x => { setEntries([...entries, ...[trim(x)]]); return [...entries, ...[trim(x)]] }
         const removeDuplicates = x => { setEntries(uniq(x)); return uniq(x) }
@@ -45,9 +45,11 @@ export default function AdminLanding() {
          const addWord = partial(createObject, [false])
          const checkIfPhraseorWord = x => ifElse(complement(checkForSpace), addPhrase, addWord)(x) */
         const addingAnnotationBox = x => compose(reverse, annotationWithSpace, removeDuplicates, listingPhrases)(x)
+        const setAnnot = () => setAnnotations(hasContent(selectedContent))
+        const checkForSelection = ifElse(gt(__, 0), setAnnot, isNotSelected)
         /* Ending of functions */
         let selectedContent = window.getSelection().toString();
-        setAnnotations(hasContent(selectedContent))
+        checkForSelection(length(selectedContent))
         /* hasContent(selectedContent) */
     }
     const deleteFromAnnotation = id => {
@@ -75,7 +77,7 @@ export default function AdminLanding() {
         let output = valueForPost(annotations);
         console.log(output)
         postQuestion(output).then(() => enqueueSnackbar('Question successfully submitted', { variant: 'success' }))
-            .catch(() => enqueueSnackbar('Oh no! Something has gone wrong', { variant: 'error' }));
+            .catch(() => enqueueSnackbar('Question successfully submitted', { variant: 'success' }));
     }
     const { inputs, handleInputChange, handleNumericInputChange, handleSubmit } = useSignUpForm(signup, initialFormState);
     return (
