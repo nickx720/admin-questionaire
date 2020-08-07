@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { postQuestion, getTopics } from './services.js'
 import useSignUpForm from '../../helpers/FormHooks.js';
 import { useSnackbar } from 'notistack';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import './styles.css';
 export default function AdminLanding() {
 
     const [annotations, setAnnotations] = useState(null);
@@ -25,7 +27,12 @@ export default function AdminLanding() {
         rawQuestion: "",
         rawAnswer: "",
         totalMarks: 0,
-        maxMarks: 0
+        maxMarks: 0,
+        topics: []
+    }
+    const defaultProps = {
+        options: [{ title: "Keyword", value: "Keyword" }, { title: "Phrase", value: "Phrase" }],
+        getOptionLabel: (option) => option.title
     }
 
 
@@ -71,8 +78,8 @@ export default function AdminLanding() {
         const removePhrase = [...annotations].map(x => omit(['isPhrase'], x))
         const setAnnotationsWithKeywords = (inputs) => set(xKeyWord, removePhrase, { ...inputs });
         const xTopics = lensProp('topics')
-        const setTopicsWithKeyTopic = (inputs) => set(xTopics, [...topics], { ...inputs })
-        const composePostBodyWithInput = () => compose(setAnnotationsWithKeywords, /* setTopicsWithKeyTopic */)(inputs)
+        const setTopicsWithKeyTopic = (inputs) => set(xTopics, [...topics].map(x => ({ keyword: x, marks: 1, synonyms: [] })), { ...inputs })
+        const composePostBodyWithInput = () => compose(setAnnotationsWithKeywords, setTopicsWithKeyTopic)(inputs)
         const valueForPost = x => ifElse(isNil, warnUser, composePostBodyWithInput)(x)
         let output = valueForPost(annotations);
         console.log(output)
@@ -242,10 +249,13 @@ export default function AdminLanding() {
                                             </td>
                                             <td className="text-center"> <div className="h-auto py-0 px-3 ">
                                                 <div>
-                                                    <span
-                                                        onClick={e => e.preventDefault()}
-                                                        className="font-weight-bold text-black"
-                                                        title="...">{x.isPhrase ? "Phrase" : "Keyword"}</span>
+                                                    <Autocomplete
+                                                        {...defaultProps}
+                                                        id="debug"
+                                                        debug
+
+                                                        renderInput={(params) => <TextField {...params} label="Choose" margin="normal" />}
+                                                    />
                                                 </div>
                                             </div></td>
                                             <td className="text-center">
